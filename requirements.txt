@@ -6,4 +6,5 @@ matplotlib
 xgboost
 lightgbm
 catboost
--e .
+dill
+# -e .

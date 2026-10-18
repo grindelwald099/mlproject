@@ -8,6 +8,7 @@ from sklearn.model_selection import train_test_split
 
 from src.exception import CustomException
 from src.logger import logging
+from src.components.data_transformation import DataTransformation
 
 
 @dataclass
@@ -26,18 +27,22 @@ class DataIngestion:
 
         try:
             # Read the source dataset
-            source_path = os.path.join("notebook", "data", "stud.csv")
+            source_path = os.path.join(
+                "notebook", "data", "stud.csv"
+            )
             df = pd.read_csv(source_path)
 
             logging.info("Dataset read successfully")
 
-            # Create the artifacts directory
+            # Create artifacts directory
             os.makedirs(
-                os.path.dirname(self.ingestion_config.raw_data_path),
+                os.path.dirname(
+                    self.ingestion_config.raw_data_path
+                ),
                 exist_ok=True
             )
 
-            # Save the raw dataset
+            # Save raw dataset
             df.to_csv(
                 self.ingestion_config.raw_data_path,
                 index=False
@@ -45,16 +50,14 @@ class DataIngestion:
 
             logging.info("Raw dataset saved successfully")
 
-            # Split the dataset into training and testing sets
+            # Split into train and test datasets
             train_df, test_df = train_test_split(
                 df,
                 test_size=0.2,
                 random_state=42
             )
 
-            logging.info("Dataset split completed successfully")
-
-            # Save training and testing datasets
+            # Save train and test datasets
             train_df.to_csv(
                 self.ingestion_config.train_data_path,
                 index=False
@@ -65,7 +68,7 @@ class DataIngestion:
                 index=False
             )
 
-            logging.info("Training and testing datasets saved successfully")
+            logging.info("Data ingestion completed successfully")
 
             return (
                 self.ingestion_config.raw_data_path,
@@ -85,7 +88,14 @@ if __name__ == "__main__":
         data_ingestion.initiate_data_ingestion()
     )
 
-    print("Data ingestion completed successfully!")
-    print(f"Raw data: {raw_data}")
-    print(f"Training data: {train_data}")
-    print(f"Testing data: {test_data}")
+    logging.info("Starting data transformation")
+
+    data_transformation = DataTransformation()
+
+    transformed_data = (
+        data_transformation.initiate_data_transformation(
+            train_data, test_data
+        )
+    )
+
+    print("Data ingestion and transformation completed successfully!")

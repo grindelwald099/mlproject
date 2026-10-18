@@ -1,0 +1,35 @@
+{
+  "build": "hd0f0c4f_1",
+  "build_number": 1,
+  "channel": "https://conda.anaconda.org/conda-forge/osx-arm64",
+  "constrains": [],
+  "depends": [
+    "__osx >=11.0",
+    "liblzma 5.8.3 h8088a28_1",
+    "liblzma-devel 5.8.3 h8088a28_1",
+    "xz-gpl-tools 5.8.3 hd0f0c4f_1",
+    "xz-tools 5.8.3 h8088a28_1"
+  ],
+  "extracted_package_dir": "/Users/veeru/anaconda3/pkgs/xz-5.8.3-hd0f0c4f_1",
+  "files": [],
+  "fn": "xz-5.8.3-hd0f0c4f_1.conda",
+  "license": "0BSD AND LGPL-2.1-or-later AND GPL-2.0-or-later",
+  "link": {
+    "source": "/Users/veeru/anaconda3/pkgs/xz-5.8.3-hd0f0c4f_1",
+    "type": 1
+  },
+  "md5": "6a20980b26ab5768ba04beb4d8706b9d",
+  "name": "xz",
+  "package_tarball_full_path": "/Users/veeru/anaconda3/pkgs/xz-5.8.3-hd0f0c4f_1.conda",
+  "paths_data": {
+    "paths": [],
+    "paths_version": 1
+  },
+  "requested_spec": "None",
+  "sha256": "f83d8ac2c553ba4898c42646a3697e19071b061032f802a83c9b8d7a613775ef",
+  "size": 23456,
+  "subdir": "osx-arm64",
+  "timestamp": 1786348728573,
+  "url": "https://conda.anaconda.org/conda-forge/osx-arm64/xz-5.8.3-hd0f0c4f_1.conda",
+  "version": "5.8.3"
+}

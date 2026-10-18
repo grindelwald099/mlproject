@@ -10,6 +10,9 @@ from src.exception import CustomException
 from src.logger import logging
 from src.components.data_transformation import DataTransformation
 
+from src.components.model_trainer import ModelTrainerConfig
+from src.components.model_trainer import ModelTrainer
+
 
 @dataclass
 class DataIngestionConfig:
@@ -81,21 +84,63 @@ class DataIngestion:
             raise CustomException(e, sys) from e
 
 
+
 if __name__ == "__main__":
     data_ingestion = DataIngestion()
 
+    # Step 1: Data ingestion
     raw_data, train_data, test_data = (
         data_ingestion.initiate_data_ingestion()
     )
 
-    logging.info("Starting data transformation")
+    logging.info("Data ingestion completed")
 
+    # Step 2: Data transformation
     data_transformation = DataTransformation()
 
-    transformed_data = (
+    train_arr, test_arr, preprocessor_path = (
         data_transformation.initiate_data_transformation(
-            train_data, test_data
+            train_data,
+            test_data
         )
     )
 
-    print("Data ingestion and transformation completed successfully!")
+    logging.info("Data transformation completed")
+    logging.info(f"Preprocessor saved at: {preprocessor_path}")
+
+    
+    # Step 3: Model training
+    model_trainer = ModelTrainer()
+
+    model_path, model_report = (
+        model_trainer.initiate_model_training(
+            train_arr,
+            test_arr
+        )
+    )
+
+    # Find the model with the highest test R2
+    best_model_name = max(
+        model_report,
+        key=lambda name: (
+            model_report[name]["Test R2"]
+            if isinstance(model_report[name], dict)
+            else model_report[name]
+        )
+    )
+
+    best_test_r2 = (
+        model_report[best_model_name]["Test R2"]
+        if isinstance(model_report[best_model_name], dict)
+        else model_report[best_model_name]
+    )
+
+    logging.info("Model training completed")
+
+    print("\n========== BEST MODEL RESULTS ==========")
+    print(f"Best Model Name : {best_model_name}")
+    print(f"Highest Test R2 : {best_test_r2:.4f}")
+    print(f"Saved Model Path: {model_path}")
+    print("========================================")
+
+

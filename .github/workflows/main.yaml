@@ -46,8 +46,7 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push image to Amazon ECR
-        id: build-image
+      - name: Build and push Docker image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: studentperformance
@@ -55,7 +54,6 @@ jobs:
         run: |
           docker build -t "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" .
           docker push "$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> "$GITHUB_OUTPUT"
 
   Continuous-Deployment:
     name: Continuous Deployment
@@ -74,11 +72,12 @@ jobs:
           aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Login to Amazon ECR
+        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
       - name: Pull latest image
         env:
-          ECR_REGISTRY: ${{ secrets.AWS_ECR_LOGIN_URI }}
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           docker pull "$ECR_REGISTRY/studentperformance:latest"
 
@@ -87,16 +86,19 @@ jobs:
           docker rm -f mltest 2>/dev/null || true
 
       - name: Run Docker container
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
         run: |
           docker run -d \
             --restart unless-stopped \
             -p 8080:5000 \
             --name mltest \
-            "${{ secrets.AWS_ECR_LOGIN_URI }}/studentperformance:latest"
+            "$ECR_REGISTRY/studentperformance:latest"
 
       - name: Verify deployment
         run: |
-          docker ps --filter name=mltest
           sleep 5
+          docker ps --filter name=mltest
           docker logs --tail 50 mltest
-          curl --fail --retry 3 --retry-delay 2 http://localhost:8080/
+          curl --fail --retry 3 --retry-delay 2 \
+            http://localhost:8080/

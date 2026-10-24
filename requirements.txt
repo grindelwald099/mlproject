@@ -1,7 +1,7 @@
 pandas
 numpy
 seaborn
-scikit-learn
+scikit-learn==1.3.2
 matplotlib
 xgboost
 lightgbm
